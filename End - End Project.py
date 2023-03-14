@@ -5,7 +5,7 @@
 
 # #### Primero debemos importar nuestras librerias y tambien importar nuestro DATASET que vamos a estar utilizando
 
-# In[2]:
+# In[53]:
 
 
 import os
@@ -46,7 +46,7 @@ def fetch_housing_data(housing_url=HOUSING_URL, housing_path=HOUSING_PATH):
 
 # ### Se usa el pd.read_csv para poder abrir nuestro DATASET que esta enfomrato .csv
 
-# In[3]:
+# In[54]:
 
 
 fetch_housing_data()
@@ -57,7 +57,7 @@ def load_housing_data(housing_path=HOUSING_PATH):
 
 # ### Podemos ver como esta distribuido nuesto DATASET
 
-# In[4]:
+# In[55]:
 
 
 housing = load_housing_data()
@@ -66,7 +66,7 @@ housing.head()
 
 # ### Aqui podemos apreciar los valores proemdio y la cantidad de valores por parametro, en este caso queremos saber sobre el tag "Ocean_proximity"
 
-# In[5]:
+# In[56]:
 
 
 print(housing["ocean_proximity"].value_counts())
@@ -75,7 +75,7 @@ print(housing.describe())
 
 # ### Representación gráfica sobre los datos que tenemos
 
-# In[6]:
+# In[57]:
 
 
 import matplotlib.pyplot as plt
@@ -86,7 +86,7 @@ plt.show()
 
 # ### Aquí se hace un split de los datos para encontrar una distruición adecuada, ya que en las imagenes pasadas no nos dice mucho sobre el comportamiento de los datos y creamos una nueva variable "income_cat"
 
-# In[7]:
+# In[58]:
 
 
 def split_train_test(data, test_ratio):
@@ -97,7 +97,7 @@ def split_train_test(data, test_ratio):
     return data.iloc[train_indices], data.iloc[test_indices]
 
 
-# In[8]:
+# In[59]:
 
 
 train_set, test_set = split_train_test(housing, 0.2)
@@ -106,7 +106,7 @@ len(test_set)
 train_set, test_set = train_test_split(housing, test_size=0.2, random_state=42)
 
 
-# In[9]:
+# In[60]:
 
 
 housing["income_cat"] = pd.cut(housing["median_income"], bins=[0.,1.5,3.0,4.5,6.,np.inf], labels=[1,2,3,4,5])
@@ -115,7 +115,7 @@ housing["income_cat"].hist()
 
 # ### aqui hacemos un split random de nuestros datos para que los pueda agarrar como TEST
 
-# In[10]:
+# In[61]:
 
 
 split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
@@ -128,7 +128,7 @@ for set_ in (strat_train_set, strat_test_set):
 
 # ### Podemos ver en la representación de abajo, como es la visualización de los datos usando longitud y latitud, la cual nos muestra la costa de california 
 
-# In[11]:
+# In[62]:
 
 
 housing = strat_train_set.copy()
@@ -143,7 +143,7 @@ plt.legend()
 
 # ### se hace una matriz de correlación de los datos para ver cuales se tienen mas distribucion entre ellos
 
-# In[12]:
+# In[63]:
 
 
 corr_matrix = housing.corr()
@@ -152,7 +152,7 @@ attributes = ["median_house_value", "median_income", "total_rooms", "housing_med
 scatter_matrix(housing[attributes], figsize=(12,8))
 
 
-# In[13]:
+# In[64]:
 
 
 housing["rooms_per_household"] = housing["total_rooms"]/housing["households"]
@@ -165,7 +165,7 @@ corr_matrix["median_house_value"].sort_values(ascending=False)
 
 # ### Aqui es donde empezamos a preparar nuestros datos para aplicar algun algoritmo de ML, los cuales tenemos que quitar los datos de predicción de pasos atrás. Se pueden usar técnicas para los datos faltantes como se muestra en la parte de abajo, ya que estos datos que no estan completos, nos pueden ocasionar ruido en nuestro modelo
 
-# In[14]:
+# In[65]:
 
 
 housing = strat_train_set.drop("median_house_value", axis=1)
@@ -178,7 +178,7 @@ housing["total_bedrooms"].fillna(median, inplace=True)
 
 # ### Aqui podemos ver una funcion mas sencilla sobre el drop de los datos, solo debemos de poner que es lo que queremos hacer con ellos, en este caso usaremos la media para rellenar los espacios vacios
 
-# In[15]:
+# In[66]:
 
 
 imputer = SimpleImputer(strategy="median")
@@ -186,19 +186,19 @@ housing_num = housing.drop("ocean_proximity", axis=1)
 imputer.fit(housing_num)
 
 
-# In[16]:
+# In[67]:
 
 
 imputer.statistics_
 
 
-# In[17]:
+# In[68]:
 
 
 housing_num.median().values
 
 
-# In[18]:
+# In[69]:
 
 
 X = imputer.transform(housing_num)
@@ -208,14 +208,14 @@ housing_tr = pd.DataFrame(X, columns=housing_num.columns,
 
 # ### Dentro de nuesto DATASET existe un parametro que es letra, entonces podemos cambiar eso por numero para asi nuestro modelo de ML no tenga ningun inconveniente
 
-# In[19]:
+# In[70]:
 
 
 housing_cat = housing[["ocean_proximity"]]
 housing_cat.head(10)
 
 
-# In[20]:
+# In[71]:
 
 
 ordinal_encoder = OrdinalEncoder()
@@ -223,7 +223,7 @@ housing_cat_encoded = ordinal_encoder.fit_transform(housing_cat)
 housing_cat_encoded[:10]
 
 
-# In[21]:
+# In[72]:
 
 
 ordinal_encoder.categories_
@@ -231,7 +231,7 @@ ordinal_encoder.categories_
 
 # ### Aquí crearemos una matriz de 0 y 1 para mostrar si la categoria es la que busacamos, si es correcto se pone un 1, si no se pone un 0
 
-# In[22]:
+# In[73]:
 
 
 cat_encoder = OneHotEncoder()
@@ -239,7 +239,7 @@ housing_cat_1hot = cat_encoder.fit_transform(housing_cat)
 housing_cat_1hot
 
 
-# In[23]:
+# In[74]:
 
 
 housing_cat_1hot.toarray()
@@ -247,7 +247,7 @@ housing_cat_1hot.toarray()
 
 # ### Utilizamos una técnica de Transformers para poder crear nuevos atributos
 
-# In[24]:
+# In[75]:
 
 
 
@@ -274,7 +274,7 @@ housing_extra_attribs = attr_adder.transform(housing.values)
 
 # ### También podemos usar pipline que nos ayuda a como ensamblar ciertos parametros
 
-# In[25]:
+# In[76]:
 
 
 num_pipeline = Pipeline([
@@ -286,7 +286,7 @@ num_pipeline = Pipeline([
 housing_num_tr = num_pipeline.fit_transform(housing_num)
 
 
-# In[26]:
+# In[77]:
 
 
 num_attribs = list(housing_num)
@@ -300,13 +300,13 @@ full_pipeline = ColumnTransformer([
 housing_prepared = full_pipeline.fit_transform(housing)
 
 
-# In[27]:
+# In[78]:
 
 
 housing_prepared
 
 
-# In[28]:
+# In[79]:
 
 
 #obtener el sav
@@ -317,7 +317,7 @@ dump(housing_prepared, 'pipeline.sav')
 
 # ### Ahora si ya podemos utilizar un modelo de ML para la parte de la predicción
 
-# In[29]:
+# In[80]:
 
 
 lin_reg = LinearRegression()
@@ -326,7 +326,7 @@ lin_reg.fit(housing_prepared, housing_labels)
 
 # ### Vemos nuestros datos de predicción
 
-# In[30]:
+# In[81]:
 
 
 some_data = housing.iloc[:5]
@@ -336,7 +336,7 @@ some_data_prepared = full_pipeline.transform(some_data)
 print("Predictions:", lin_reg.predict(some_data_prepared))
 
 
-# In[31]:
+# In[82]:
 
 
 print("Labels:", list(some_labels))
@@ -344,7 +344,7 @@ print("Labels:", list(some_labels))
 
 # ### Y vemos cual es nuestro error sobre la predicción
 
-# In[32]:
+# In[83]:
 
 
 housing_predictions = lin_reg.predict(housing_prepared)
@@ -353,7 +353,7 @@ lin_rmse = np.sqrt(lin_mse)
 lin_rmse
 
 
-# In[41]:
+# In[105]:
 
 
 #GridSearchCV Linear Regression
@@ -366,15 +366,17 @@ lin_reg_grid = GridSearchCV(lin_reg, param_grid, cv=5)
 lin_reg_grid.fit(housing_prepared, housing_labels)
 
 
-# In[42]:
+# In[106]:
 
 
 print('Best Score: ', lin_reg_grid.best_score_) 
 print('Best Params: ', lin_reg_grid.best_params_)
 
 
-# In[45]:
+# In[107]:
 
+
+lin_reg_grid_pred_model = lin_reg_grid.best_estimator_
 
 X_test = strat_test_set.drop("median_house_value", axis=1)
 y_test = strat_test_set["median_house_value"].copy()
@@ -386,22 +388,22 @@ lin_reg_grid_pred_mse = mean_squared_error(y_test, lin_reg_grid_pred)
 lin_reg_grid_pred_rmse = np.sqrt(lin_reg_grid_pred_mse)
 
 
-# In[46]:
+# In[108]:
 
 
 lin_reg_grid_pred_rmse
 
 
-# In[47]:
+# In[109]:
 
 
 from joblib import dump
-dump(lin_reg_grid_pred_rmse, 'lin_regression.sav')
+dump(lin_reg_grid_pred_model, 'lin_regression.sav')
 
 
 # ### También podemos usar otro modelo 
 
-# In[48]:
+# In[110]:
 
 
 tree_reg = DecisionTreeRegressor(random_state=42)
@@ -410,7 +412,7 @@ tree_reg.fit(housing_prepared, housing_labels)
 
 # ### Podemos apreciar que nuestro error es 0.0, pero no necesarimente es correcto ya que puede ser que nuestro modelo este sobreentrenado
 
-# In[49]:
+# In[111]:
 
 
 housing_predictions = tree_reg.predict(housing_prepared)
@@ -421,7 +423,7 @@ tree_rmse
 
 # ### Para validar nuestro error pasado, usamos un cross validation para hacer un split de test en el split de test
 
-# In[50]:
+# In[112]:
 
 
 scores = cross_val_score(tree_reg, housing_prepared, housing_labels,
@@ -431,7 +433,7 @@ tree_rmse_scores = np.sqrt(-scores)
 
 # ### Y efectivamente podemos ver que nuestro error no es 0.0
 
-# In[51]:
+# In[113]:
 
 
 def display_scores(scores):
@@ -442,7 +444,7 @@ def display_scores(scores):
 display_scores(tree_rmse_scores)
 
 
-# In[52]:
+# In[114]:
 
 
 lin_scores = cross_val_score(lin_reg, housing_prepared, housing_labels,
@@ -451,7 +453,7 @@ lin_rmse_scores = np.sqrt(-lin_scores)
 display_scores(lin_rmse_scores)
 
 
-# In[53]:
+# In[115]:
 
 
 #GridSearchCV Decission Tree Regressor
@@ -464,16 +466,17 @@ tree_reg_grid = GridSearchCV(tree_reg, param_grid, cv=5)
 tree_reg_grid.fit(housing_prepared, housing_labels)
 
 
-# In[54]:
+# In[116]:
 
 
 print('Best Score: ', tree_reg_grid.best_score_) 
 print('Best Params: ', tree_reg_grid.best_params_)
 
 
-# In[56]:
+# In[117]:
 
 
+tree_reg_grid_pred_model = tree_reg_grid.best_estimator_
 X_test = strat_test_set.drop("median_house_value", axis=1)
 y_test = strat_test_set["median_house_value"].copy()
 
@@ -484,22 +487,22 @@ tree_reg_grid_pred_mse = mean_squared_error(y_test, tree_reg_grid_pred)
 tree_reg_grid_pred_rmse = np.sqrt(tree_reg_grid_pred_mse)
 
 
-# In[57]:
+# In[118]:
 
 
 tree_reg_grid_pred_rmse
 
 
-# In[58]:
+# In[119]:
 
 
 from joblib import dump
-dump(tree_reg_grid_pred_rmse, 'tree_regression.sav')
+dump(tree_reg_grid_pred_model, 'tree_regression.sav')
 
 
 # ### Podemos usar otro modelo de ML
 
-# In[59]:
+# In[120]:
 
 
 forest_reg = RandomForestRegressor(n_estimators=100, random_state=42)
@@ -508,7 +511,7 @@ forest_reg.fit(housing_prepared, housing_labels)
 
 # ### y vemos que nuestro error es menor que el de LR  y que el DT
 
-# In[60]:
+# In[121]:
 
 
 housing_predictions = forest_reg.predict(housing_prepared)
@@ -517,7 +520,7 @@ forest_rmse = np.sqrt(forest_mse)
 forest_rmse
 
 
-# In[61]:
+# In[122]:
 
 
 forest_scores = cross_val_score(forest_reg, housing_prepared, housing_labels,
@@ -526,7 +529,7 @@ forest_rmse_scores = np.sqrt(-forest_scores)
 display_scores(forest_rmse_scores)
 
 
-# In[68]:
+# In[123]:
 
 
 #GridSearchCV Random Forest Regressor
@@ -541,16 +544,17 @@ forest_reg_grid = GridSearchCV(forest_reg, param_grid)
 forest_reg_grid.fit(housing_prepared, housing_labels)
 
 
-# In[69]:
+# In[124]:
 
 
 print('Best Score: ', forest_reg_grid.best_score_) 
 print('Best Params: ', forest_reg_grid.best_params_)
 
 
-# In[70]:
+# In[125]:
 
 
+forest_reg_grid_pred_model = forest_reg_grid.best_estimator_
 X_test = strat_test_set.drop("median_house_value", axis=1)
 y_test = strat_test_set["median_house_value"].copy()
 
@@ -561,17 +565,17 @@ forest_reg_grid_pred_mse = mean_squared_error(y_test, forest_reg_grid_pred)
 forest_reg_grid_pred_rmse = np.sqrt(forest_reg_grid_pred_mse)
 
 
-# In[71]:
+# In[126]:
 
 
 forest_reg_grid_pred_rmse
 
 
-# In[72]:
+# In[127]:
 
 
 from joblib import dump
-dump(forest_reg_grid_pred_rmse, 'forest_regression.sav')
+dump(forest_reg_grid_pred_model, 'forest_regression.sav')
 
 
 # ### Podemos concluir que primero debemso de tener nuestro DATASET preparado para poder ser utilizado, y despues se pueden aplicar modelos de ML, en este caso se implenetaron 3 tipos y obtuvimos sus resultados. Se hizo de manera manual, ya que para poder aplicar modelos de ML se puede utilizar un GridSerachCV, el cual podemos ponerle hiperparamtros y que nos diga con cual es la mejor combinación para tener un resultado mas óptimo
