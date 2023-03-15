@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[111]:
+# In[1]:
 
 
 import streamlit as st
@@ -13,16 +13,17 @@ import joblib
 from sklearn.linear_model import LinearRegression
 
 
-# In[112]:
+# In[2]:
 
 
 def predict(data, model_name):
+    model = joblib.load(f'models/{model_name}')
     pipeline= joblib.load('pipeline.sav')
     transformed_data = pipeline.transform(data)
     return model.predict(transformed_data)
 
 
-# In[113]:
+# In[3]:
 
 
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml2/master/"
@@ -43,7 +44,7 @@ def load_housing_data(housing_path=HOUSING_PATH):
     return pd.read_csv(csv_path)
 
 
-# In[114]:
+# In[4]:
 
 
 header = st.container()
@@ -52,14 +53,14 @@ inputs = st.container()
 modelTraining = st.container()
 
 
-# In[115]:
+# In[5]:
 
 
 with header:
     st.title('Housing Project Prediction')
 
 
-# In[116]:
+# In[6]:
 
 
 with dataset:
@@ -69,33 +70,60 @@ with dataset:
     st.write(housing.head())
 
 
-# In[117]:
+# In[7]:
 
 
 with inputs:
     st.header('Inputs del modelo')
     st.text('Selecciona los inputs para poder predecir el precio de la casa de tus sueños')
     
-    sel_col, disp_col= st.columns(2)
-    rooms = sel_col.slider('Número de cuartos', min_value=1, max_value= 10, value= 1, step=1)
-    bathrooms = sel_col.slider('Número de baños', min_value=1, max_value= 10, value= 1, step=1)
-    location = sel_col.selectbox('¿En qué zona te gustaría?', options=["ISLAND","NEAR BAY", "NEAR OCEAN", "INLAND", "<1H OCEAN"], index = 0)
-    model = sel_col.selectbox('¿Qué tipo de modelo de Machine Learning quieeras usar para tu predicción?', options=["Linear Regression","Decision Tree", "Random Forest"], index = 0)
-    
-   
+    sel_col1, sel_col2= st.columns(2)
+    longitude = sel_col1.slider('Latitud del lugar', min_value=1, max_value= 10, value= 1, step=1)
+    latitude = sel_col1.slider('Longitud del lugar', min_value=1, max_value= 10, value= 1, step=1)
+    housing_median_age = sel_col1.slider('Años promedios de la casa', min_value=1, max_value= 10, value= 1, step=1)
+    total_rooms = sel_col1.slider('Total de cuartos', min_value=1, max_value= 10, value= 1, step=1)
+    total_bedrooms = sel_col1.slider('Total de baños', min_value=1, max_value= 10, value= 1, step=1)
+    population = sel_col2.slider('Poblacion total', min_value=1, max_value= 10, value= 1, step=1)
+    households = sel_col2.slider('Tamaño de personas viviendo en la casa', min_value=1, max_value= 10, value= 1, step=1)
+    median_income = sel_col2.slider('Ingreso medios', min_value=1, max_value= 10, value= 1, step=1)
+    ocean_proximity = sel_col2.selectbox('¿En qué zona te gustaría?', options=["ISLAND","NEAR BAY", "NEAR OCEAN", "INLAND", "<1H OCEAN"], index = 0)
+    model = sel_col2.selectbox('¿Qué tipo de modelo de Machine Learning quieeras usar para tu predicción?', options=["Linear Regression","Decision Tree", "Random Forest"], index = 0)
     
 
 
-# In[124]:
+# In[12]:
 
 
 with modelTraining:
     st.header('Resultados del Modelo de ML')
+    if st.button ('Toca para predecir el precio de la casa'):
+        data = pd.DataFrame({
+            'longitude' : [longitude],
+            'latitude' : [latitude],
+            'housing_median_age' : [housing_median_age],
+            'total_rooms' : [total_rooms],
+            'total_bedrooms': [total_bedrooms],
+            'population' : [population],
+            'households': [households],
+            'median_income' : [median_income],
+            'ocean_proximity' : [ocean_proximity]
+            })
+        if model == 'Linear Regression':
+            result = predict(data, 'lin_regression.sav')
+        elif model == 'Decision Tree':
+            result = predict(data, 'tree_regression.sav')
+        elif model == 'Random Forest':
+            result = predict(data, 'forest_regression.sav')
+    
+        st.text(f'El precio de la casa es de: ${result[0]}')
   
-    loaded_model = joblib.load('lin_regression.sav')
-    result = loaded_model.score(housing_labels, housing_predictions)
-    disp_col.subheader('Resultado del modelo de ML')
-    disp_col.write(result)
+  
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
