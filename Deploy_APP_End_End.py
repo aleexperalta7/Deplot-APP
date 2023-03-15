@@ -57,7 +57,23 @@ def load_housing_data(housing_path=HOUSING_PATH):
 housing = load_housing_data()
 
 
-# In[93]:
+# In[100]:
+
+
+imputer = SimpleImputer(strategy="median")
+housing_num = housing.drop("ocean_proximity", axis=1)
+imputer.fit(housing_num)
+
+
+# In[102]:
+
+
+X = imputer.transform(housing_num)
+housing_tr = pd.DataFrame(X, columns=housing_num.columns,
+                          index=housing.index)
+
+
+# In[101]:
 
 
 rooms_ix, bedrooms_ix, population_ix, households_ix = 3, 4, 5, 6
