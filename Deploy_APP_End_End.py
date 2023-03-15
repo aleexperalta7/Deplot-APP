@@ -109,7 +109,7 @@ with modelTraining:
             'ocean_proximity' : [ocean_proximity]
             })
         if model == 'Linear Regression':
-            result = predict(data, 'lin_regression.sav')
+            result = predict(data, 'Users/Alex Peralta/Documentos Jupiter Python/lin_regression.sav')
         elif model == 'Decision Tree':
             result = predict(data, 'tree_regression.sav')
         elif model == 'Random Forest':
