@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[70]:
+# In[82]:
 
 
 import streamlit as st
@@ -20,7 +20,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LinearRegression
 
 
-# In[71]:
+# In[83]:
 
 
 def predict(data, model_name):
@@ -30,7 +30,7 @@ def predict(data, model_name):
     return model.predict(transformed_data)
 
 
-# In[72]:
+# In[84]:
 
 
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml2/master/"
@@ -51,23 +51,7 @@ def load_housing_data(housing_path=HOUSING_PATH):
     return pd.read_csv(csv_path)
 
 
-# In[73]:
-
-
-imputer = SimpleImputer(strategy="median")
-housing_num = housing.drop("ocean_proximity", axis=1)
-imputer.fit(housing_num)
-
-
-# In[74]:
-
-
-X = imputer.transform(housing_num)
-housing_tr = pd.DataFrame(X, columns=housing_num.columns,
-                          index=housing.index)
-
-
-# In[75]:
+# In[85]:
 
 
 rooms_ix, bedrooms_ix, population_ix, households_ix = 3, 4, 5, 6
@@ -91,7 +75,7 @@ attr_adder = CombinedAttributesAdder(add_bedrooms_per_room=False)
 housing_extra_attribs = attr_adder.transform(housing.values)
 
 
-# In[76]:
+# In[86]:
 
 
 num_pipeline = Pipeline([
@@ -103,7 +87,7 @@ num_pipeline = Pipeline([
 housing_num_tr = num_pipeline.fit_transform(housing_num)
 
 
-# In[77]:
+# In[87]:
 
 
 header = st.container()
@@ -112,14 +96,14 @@ inputs = st.container()
 modelTraining = st.container()
 
 
-# In[78]:
+# In[88]:
 
 
 with header:
     st.title('Housing Project Prediction')
 
 
-# In[79]:
+# In[89]:
 
 
 with dataset:
@@ -129,7 +113,7 @@ with dataset:
     st.write(housing.head())
 
 
-# In[80]:
+# In[90]:
 
 
 with inputs:
@@ -150,7 +134,7 @@ with inputs:
     
 
 
-# In[81]:
+# In[91]:
 
 
 with modelTraining:
