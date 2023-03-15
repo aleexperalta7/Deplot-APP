@@ -51,7 +51,13 @@ def load_housing_data(housing_path=HOUSING_PATH):
     return pd.read_csv(csv_path)
 
 
-# In[85]:
+# In[92]:
+
+
+housing = load_housing_data()
+
+
+# In[93]:
 
 
 rooms_ix, bedrooms_ix, population_ix, households_ix = 3, 4, 5, 6
@@ -75,7 +81,7 @@ attr_adder = CombinedAttributesAdder(add_bedrooms_per_room=False)
 housing_extra_attribs = attr_adder.transform(housing.values)
 
 
-# In[86]:
+# In[94]:
 
 
 num_pipeline = Pipeline([
@@ -87,7 +93,7 @@ num_pipeline = Pipeline([
 housing_num_tr = num_pipeline.fit_transform(housing_num)
 
 
-# In[87]:
+# In[95]:
 
 
 header = st.container()
@@ -96,14 +102,14 @@ inputs = st.container()
 modelTraining = st.container()
 
 
-# In[88]:
+# In[96]:
 
 
 with header:
     st.title('Housing Project Prediction')
 
 
-# In[89]:
+# In[97]:
 
 
 with dataset:
@@ -113,7 +119,7 @@ with dataset:
     st.write(housing.head())
 
 
-# In[90]:
+# In[98]:
 
 
 with inputs:
@@ -134,7 +140,7 @@ with inputs:
     
 
 
-# In[91]:
+# In[99]:
 
 
 with modelTraining:
