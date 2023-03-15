@@ -17,7 +17,7 @@ from sklearn.linear_model import LinearRegression
 
 
 def predict(data, model_name):
-    model = joblib.load(f'models/{model_name}')
+    model = joblib.load({model_name})
     pipeline= joblib.load('pipeline.sav')
     transformed_data = pipeline.transform(data)
     return model.predict(transformed_data)
