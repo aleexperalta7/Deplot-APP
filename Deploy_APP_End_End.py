@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[70]:
 
 
 import streamlit as st
@@ -10,20 +10,27 @@ import os
 import tarfile
 import urllib.request
 import joblib
+import pandas as pd
+import numpy as np
+from sklearn.impute import SimpleImputer
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LinearRegression
 
 
-# In[2]:
+# In[71]:
 
 
 def predict(data, model_name):
-    model = joblib.load(f'{model_name}')
+    model = joblib.load({model_name})
     pipeline= joblib.load('pipeline.sav')
     transformed_data = pipeline.transform(data)
     return model.predict(transformed_data)
 
 
-# In[3]:
+# In[72]:
 
 
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml2/master/"
@@ -44,7 +51,59 @@ def load_housing_data(housing_path=HOUSING_PATH):
     return pd.read_csv(csv_path)
 
 
-# In[4]:
+# In[73]:
+
+
+imputer = SimpleImputer(strategy="median")
+housing_num = housing.drop("ocean_proximity", axis=1)
+imputer.fit(housing_num)
+
+
+# In[74]:
+
+
+X = imputer.transform(housing_num)
+housing_tr = pd.DataFrame(X, columns=housing_num.columns,
+                          index=housing.index)
+
+
+# In[75]:
+
+
+rooms_ix, bedrooms_ix, population_ix, households_ix = 3, 4, 5, 6
+
+class CombinedAttributesAdder(BaseEstimator, TransformerMixin):
+    def __init__(self, add_bedrooms_per_room=True): 
+        self.add_bedrooms_per_room = add_bedrooms_per_room
+    def fit(self, X, y=None):
+        return self 
+    def transform(self, X):
+        rooms_per_household = X[:, rooms_ix] / X[:, households_ix]
+        population_per_household = X[:, population_ix] / X[:, households_ix]
+        if self.add_bedrooms_per_room:
+            bedrooms_per_room = X[:, bedrooms_ix] / X[:, rooms_ix]
+            return np.c_[X, rooms_per_household, population_per_household,
+                         bedrooms_per_room]
+        else:
+            return np.c_[X, rooms_per_household, population_per_household]
+
+attr_adder = CombinedAttributesAdder(add_bedrooms_per_room=False)
+housing_extra_attribs = attr_adder.transform(housing.values)
+
+
+# In[76]:
+
+
+num_pipeline = Pipeline([
+        ('imputer', SimpleImputer(strategy="median")),
+        ('attribs_adder', CombinedAttributesAdder()),
+        ('std_scaler', StandardScaler()),
+    ])
+
+housing_num_tr = num_pipeline.fit_transform(housing_num)
+
+
+# In[77]:
 
 
 header = st.container()
@@ -53,14 +112,14 @@ inputs = st.container()
 modelTraining = st.container()
 
 
-# In[5]:
+# In[78]:
 
 
 with header:
     st.title('Housing Project Prediction')
 
 
-# In[6]:
+# In[79]:
 
 
 with dataset:
@@ -70,7 +129,7 @@ with dataset:
     st.write(housing.head())
 
 
-# In[7]:
+# In[80]:
 
 
 with inputs:
@@ -91,7 +150,7 @@ with inputs:
     
 
 
-# In[12]:
+# In[81]:
 
 
 with modelTraining:
@@ -118,16 +177,4 @@ with modelTraining:
         st.text(f'El precio de la casa es de: ${result[0]}')
   
   
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
 
