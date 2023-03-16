@@ -108,6 +108,8 @@ num_pipeline = Pipeline([
 
 housing_num_tr = num_pipeline.fit_transform(housing_num)
 
+num_attribs = list(housing_num)
+cat_attribs = ["ocean_proximity"]
 
 # In[95]:
 
