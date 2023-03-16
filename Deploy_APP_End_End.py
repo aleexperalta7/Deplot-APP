@@ -151,8 +151,9 @@ with inputs:
     population = sel_col2.slider('Poblacion total', min_value=3, max_value= 35682, value= 3, step=1)
     households = sel_col2.slider('Tamaño de personas viviendo en la casa', min_value=1, max_value= 6082, value= 1, step=1)
     median_income = sel_col2.number_input('Ingreso medios', value=0.4999)
-    ocean_proximity = sel_col2.selectbox('¿En qué zona te gustaría?', options=["ISLAND","NEAR BAY", "NEAR OCEAN", "INLAND", "<1H OCEAN"], index = 0)
-    model = sel_col2.selectbox('¿Qué tipo de modelo de Machine Learning quieeras usar para tu predicción?', options=["Linear Regression","Decision Tree", "Random Forest"], index = 0)
+    ocean_proximity = sel_col2.selectbox('¿En qué zona te gustaría?', ['ISLAND','NEAR BAY', 'NEAR OCEAN', 'INLAND', '<1H OCEAN'], index = 0)
+    model = sel_col2.selectbox('¿Qué tipo de modelo de Machine Learning quieeras usar para tu predicción?', ['Linear Regression','Decision Tree', 'Random Forest'], index = 0)
+    
     
 
 
