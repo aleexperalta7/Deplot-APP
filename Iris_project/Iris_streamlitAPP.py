@@ -18,7 +18,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_sc
 
 columns = ['Sepal length', 'Sepal width', 'Petal length', 'Petal width', 'Class_labels'] 
 # Load the data
-df = pd.read_csv('iris.data', names=columns)
+df = pd.read_csv('https://raw.githubusercontent.com/aleexperalta7/Streamlit/main/Iris_project/iris.data', names=columns)
 df.head()
 
 
