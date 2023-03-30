@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[29]:
+# In[37]:
 
 
 import streamlit as st
@@ -13,7 +13,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 
 
-# In[30]:
+# In[38]:
 
 
 columns = ['Sepal length', 'Sepal width', 'Petal length', 'Petal width', 'Class_labels'] 
@@ -22,7 +22,7 @@ df = pd.read_csv('https://raw.githubusercontent.com/aleexperalta7/Streamlit/main
 df.head()
 
 
-# In[31]:
+# In[39]:
 
 
 def predict(data, model_name):
@@ -32,7 +32,16 @@ def predict(data, model_name):
     return model.predict(transformed_data)
 
 
-# In[32]:
+# In[40]:
+
+
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+
+iris_pipeline = Pipeline([("std_scaler", StandardScaler())])
+
+
+# In[41]:
 
 
 header = st.container()
@@ -41,14 +50,14 @@ inputs = st.container()
 modelTraining = st.container()
 
 
-# In[33]:
+# In[42]:
 
 
 with header:
     st.title('Clasificador flores')
 
 
-# In[34]:
+# In[43]:
 
 
 with dataset:
@@ -56,7 +65,7 @@ with dataset:
     st.write(df.head())
 
 
-# In[35]:
+# In[44]:
 
 
 with inputs:
@@ -69,7 +78,7 @@ with inputs:
     model = sel_col1.selectbox('¿Qué tipo de modelo de Machine Learning quieres usar para tu clasificación?', ['Logistic Regression','Support Vector Machine', 'Decision Tree', 'Voting Classifier'], index = 0)
 
 
-# In[36]:
+# In[45]:
 
 
 with modelTraining:
@@ -96,3 +105,4 @@ with modelTraining:
             result = "Virginica"
     
         st.text(f'La clasificación de la flor es: {result[0]}')
+
