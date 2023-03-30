@@ -88,10 +88,10 @@ with modelTraining:
             'Largo del pétalo' : [petal_length],
             'Ancho del pétalo' : [petal_width]
             })
-        if model == 'Logistic Regression':
-            result = predict(data, 'Log_reg.sav')
-        elif model == 'Support Vector Machine':
+        if model == 'Support Vector Machine':
             result = predict(data, 'SVM.sav')
+        elif model == 'Logistic Regression':
+            result = predict(data, 'Log_reg.sav')
         elif model == 'Decision Tree':
             result = predict(data, 'Dec_tree.sav')
         elif model == 'Voting Classifier':
