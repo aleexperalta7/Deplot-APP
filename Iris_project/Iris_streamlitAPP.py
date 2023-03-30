@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[29]:
 
 
 import streamlit as st
@@ -13,16 +13,26 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 
 
-# In[2]:
+# In[30]:
 
 
 columns = ['Sepal length', 'Sepal width', 'Petal length', 'Petal width', 'Class_labels'] 
 # Load the data
-df = pd.read_csv('iris.data', names=columns)
+df = pd.read_csv('https://raw.githubusercontent.com/aleexperalta7/Streamlit/main/Iris_project/iris.data', names=columns)
 df.head()
 
 
-# In[3]:
+# In[31]:
+
+
+def predict(data, model_name):
+    model = joblib.load(f'{model_name}')
+    pipeline= joblib.load('iris_pipeline.sav')
+    transformed_data = pipeline.transform(data)
+    return model.predict(transformed_data)
+
+
+# In[32]:
 
 
 header = st.container()
@@ -31,14 +41,14 @@ inputs = st.container()
 modelTraining = st.container()
 
 
-# In[4]:
+# In[33]:
 
 
 with header:
     st.title('Clasificador flores')
 
 
-# In[5]:
+# In[34]:
 
 
 with dataset:
@@ -46,7 +56,7 @@ with dataset:
     st.write(df.head())
 
 
-# In[6]:
+# In[35]:
 
 
 with inputs:
@@ -59,7 +69,7 @@ with inputs:
     model = sel_col1.selectbox('¿Qué tipo de modelo de Machine Learning quieres usar para tu clasificación?', ['Logistic Regression','Support Vector Machine', 'Decision Tree', 'Voting Classifier'], index = 0)
 
 
-# In[7]:
+# In[36]:
 
 
 with modelTraining:
@@ -86,4 +96,3 @@ with modelTraining:
             result = "Virginica"
     
         st.text(f'La clasificación de la flor es: {result[0]}')
-
